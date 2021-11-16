@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect, createRef } from 'react';
 import {
 	CircularProgress,
 	Grid,
@@ -9,6 +9,7 @@ import {
 	Select,
 } from '@material-ui/core';
 
+import { AppContext } from '../../App';
 import PlaceDetails from '../PlaceDetails';
 import { useStyles } from './styles';
 
@@ -18,10 +19,12 @@ const TYPES = {
 	ATTRACTIONS: 'Attractions',
 };
 
-const List = ({ places }) => {
+const List = () => {
 	const classes = useStyles();
 	const [type, setType] = useState(TYPES.RESTAURANTS);
 	const [rating, setRating] = useState('');
+	const { places, childClicked } = useContext(AppContext);
+	console.log({ childClicked });
 
 	return (
 		<div className={classes.container}>

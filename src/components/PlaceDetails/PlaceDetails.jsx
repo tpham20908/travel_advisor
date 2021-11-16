@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
 	Box,
 	Typography,
@@ -6,24 +6,26 @@ import {
 	Card,
 	CardMedia,
 	CardContent,
-	CardAction,
 	Chip,
 	CardActions,
 } from '@material-ui/core';
 import {
-	LocationOn,
 	LocationOn as LocationOnIcon,
 	Phone as PhoneIcon,
 } from '@material-ui/icons';
 import Rating from '@material-ui/lab/Rating';
 
+import { AppContext } from '../../App';
 import { useStyles } from './styles';
 
 const PlaceDetails = ({ place }) => {
 	const classes = useStyles();
+	const { defaultImg } = useContext(AppContext);
 	const {
 		name = '',
 		photo = '',
+		rating = '',
+		num_revies = 0,
 		price_level: priceLevel = '',
 		ranking = '',
 		awards = [],
@@ -32,6 +34,7 @@ const PlaceDetails = ({ place }) => {
 		phone = '',
 		web_url = '',
 		website = '',
+		write_review = '',
 	} = place;
 
 	if (!name) {
@@ -42,17 +45,21 @@ const PlaceDetails = ({ place }) => {
 		<Card elevation={6}>
 			<CardMedia
 				style={{ height: 350 }}
-				image={
-					photo
-						? photo.images.large.url
-						: 'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg'
-				}
+				image={photo ? photo.images.large.url : defaultImg}
 				title={name}
 			/>
 			<CardContent>
 				<Typography gutterBottom variant='h5'>
 					{name}
 				</Typography>
+
+				{/* Rating */}
+				<Box display='flex' justifyContent='space-between' my={2}>
+					<Rating name='read-only' value={Number(rating)} readOnly />
+					<Typography component='legend'>
+						{place.num_reviews} review{place.num_reviews > 1 && 's'}
+					</Typography>
+				</Box>
 
 				{/* Price level */}
 				<Box display='flex' justifyContent='space-between'>
@@ -114,16 +121,24 @@ const PlaceDetails = ({ place }) => {
 					<Button
 						size='small'
 						color='primary'
-						onClick={() => window.open(web_url, '_blank')}
+						onClick={() => window.open(website, '_blank')}
 					>
-						Trip Advisor
+						Website
 					</Button>
 					<Button
 						size='small'
 						color='primary'
-						onClick={() => window.open(website, '_blank')}
+						onClick={() => window.open(web_url, '_blank')}
 					>
-						Website
+						Trip Advisor Reviews
+					</Button>
+
+					<Button
+						size='small'
+						color='primary'
+						onClick={() => window.open(write_review, '_blank')}
+					>
+						Write Review
 					</Button>
 				</CardActions>
 			</CardContent>
