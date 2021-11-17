@@ -6,6 +6,12 @@ import Header from './components/Header';
 import List from './components/List';
 import Map from './components/Map';
 
+export const TYPES = {
+	RESTAURANTS: 'Restaurants',
+	HOTELS: 'Hotels',
+	ATTRACTIONS: 'Attractions',
+};
+
 const defaultImg =
 	'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg';
 export const AppContext = createContext({});
@@ -15,6 +21,9 @@ const App = () => {
 	const [coordinates, setCoordinates] = useState({});
 	const [bounds, setBounds] = useState({});
 	const [childClicked, setChildClicked] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [type, setType] = useState(TYPES.RESTAURANTS);
+	const [rating, setRating] = useState('');
 	const { Provider } = AppContext;
 
 	useEffect(() => {
@@ -26,15 +35,19 @@ const App = () => {
 	}, []);
 
 	useEffect(() => {
-		getPlacesData(bounds?.sw, bounds?.ne).then((data) => {
+		setIsLoading(true);
+		getPlacesData(type, bounds?.sw, bounds?.ne).then((data) => {
 			setPlaces(data);
+			setIsLoading(false);
 		});
-	}, [coordinates, bounds]);
+	}, [coordinates, bounds, type]);
+
+	const filteredPlaces = places?.filter((place) => place?.rating > rating);
 
 	return (
 		<Provider
 			value={{
-				places,
+				places: filteredPlaces,
 				coordinates,
 				setCoordinates,
 				bounds,
@@ -42,6 +55,11 @@ const App = () => {
 				childClicked,
 				setChildClicked,
 				defaultImg,
+				isLoading,
+				type,
+				setType,
+				rating,
+				setRating,
 			}}
 		>
 			<CssBaseline>

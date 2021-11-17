@@ -18,14 +18,14 @@ import Rating from '@material-ui/lab/Rating';
 import { AppContext } from '../../App';
 import { useStyles } from './styles';
 
-const PlaceDetails = ({ place }) => {
+const PlaceDetails = ({ place, selected, refProp }) => {
 	const classes = useStyles();
 	const { defaultImg } = useContext(AppContext);
 	const {
 		name = '',
 		photo = '',
 		rating = '',
-		num_revies = 0,
+		num_reviews = 0,
 		price_level: priceLevel = '',
 		ranking = '',
 		awards = [],
@@ -36,6 +36,10 @@ const PlaceDetails = ({ place }) => {
 		website = '',
 		write_review = '',
 	} = place;
+
+	if (selected) {
+		refProp?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
 
 	if (!name) {
 		return null;
@@ -57,7 +61,7 @@ const PlaceDetails = ({ place }) => {
 				<Box display='flex' justifyContent='space-between' my={2}>
 					<Rating name='read-only' value={Number(rating)} readOnly />
 					<Typography component='legend'>
-						{place.num_reviews} review{place.num_reviews > 1 && 's'}
+						{num_reviews} review{num_reviews > 1 && 's'}
 					</Typography>
 				</Box>
 

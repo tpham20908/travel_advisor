@@ -1,6 +1,11 @@
 import React, { useContext } from 'react';
 import GoogleMapReact from 'google-map-react';
-import { Paper, Typography, useMediaQuery } from '@material-ui/core';
+import {
+	Paper,
+	Typography,
+	CircularProgress,
+	useMediaQuery,
+} from '@material-ui/core';
 import {
 	LocationOn as LocationOnIcon,
 	LocationOnOutlined as LocationOnOutlinedIcon,
@@ -39,46 +44,45 @@ const Map = () => {
 					setChildClicked(child);
 				}}
 			>
-				{places.length &&
-					places.map((place, idx) => {
-						const {
-							latitude = '',
-							longitude = '',
-							name = '',
-							rating = '',
-						} = place;
-						return (
-							<div
-								key={idx}
-								className={classes.markerContainer}
-								lat={Number(latitude)}
-								lng={Number(longitude)}
-							>
-								{!isDesktop ? (
-									<LocationOnIcon />
-								) : (
-									<Paper elevation={3} className={classes.paper}>
-										<Typography
-											className={classes.typography}
-											variant='subtitle2'
-										>
-											{name}
-										</Typography>
-										<img
-											className={classes.pointer}
-											src={defaultImg}
-											alt={name}
-										/>
-										<Rating
-											style={{ fontSize: '1rem' }}
-											value={Number(rating)}
-											readOnly
-										/>
-									</Paper>
-								)}
-							</div>
-						);
-					})}
+				{places?.map((place, idx) => {
+					const {
+						latitude = '',
+						longitude = '',
+						name = '',
+						rating = '',
+					} = place;
+					return (
+						<div
+							key={idx}
+							className={classes.markerContainer}
+							lat={Number(latitude)}
+							lng={Number(longitude)}
+						>
+							{!isDesktop ? (
+								<LocationOnIcon />
+							) : (
+								<Paper elevation={3} className={classes.paper}>
+									<Typography
+										className={classes.typography}
+										variant='subtitle2'
+									>
+										{name}
+									</Typography>
+									<img
+										className={classes.pointer}
+										src={defaultImg}
+										alt={name}
+									/>
+									<Rating
+										style={{ fontSize: '1rem' }}
+										value={Number(rating)}
+										readOnly
+									/>
+								</Paper>
+							)}
+						</div>
+					);
+				})}
 			</GoogleMapReact>
 		</div>
 	);
