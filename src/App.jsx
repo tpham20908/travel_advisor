@@ -1,10 +1,13 @@
 import React, { useEffect, useState, createContext } from 'react';
 import { CssBaseline, Grid } from '@material-ui/core';
 
-import { getPlacesData } from './api';
+import { getPlacesData, getWeatherData } from './api';
 import Header from './components/Header';
 import List from './components/List';
 import Map from './components/Map';
+
+const defaultImg =
+	'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg';
 
 export const TYPES = {
 	RESTAURANTS: 'Restaurants',
@@ -12,12 +15,11 @@ export const TYPES = {
 	ATTRACTIONS: 'Attractions',
 };
 
-const defaultImg =
-	'https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg';
 export const AppContext = createContext({});
 
 const App = () => {
 	const [places, setPlaces] = useState([]);
+	const [weatherData, setWeatherData] = useState([]);
 	const [coordinates, setCoordinates] = useState({});
 	const [bounds, setBounds] = useState({});
 	const [childClicked, setChildClicked] = useState(null);
@@ -36,11 +38,21 @@ const App = () => {
 	}, []);
 
 	useEffect(() => {
-		if (bounds) {
+		const shouldFetchData =
+			bounds?.sw && bounds?.ne && coordinates?.lat && coordinates?.lng;
+
+		if (shouldFetchData) {
 			setIsLoading(true);
+
+			// get places
 			getPlacesData(type, bounds?.sw, bounds?.ne).then((data) => {
 				setPlaces(data?.filter((place) => place.name && place.num_reviews));
 				setIsLoading(false);
+			});
+
+			// get weather
+			getWeatherData(coordinates?.lat, coordinates?.lng).then((data) => {
+				setWeatherData(data);
 			});
 		}
 	}, [bounds, type]);
@@ -61,6 +73,7 @@ const App = () => {
 		<Provider
 			value={{
 				places: filteredPlaces,
+				weatherData,
 				coordinates,
 				setCoordinates,
 				bounds,
