@@ -24,6 +24,7 @@ const App = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [type, setType] = useState(TYPES.RESTAURANTS);
 	const [rating, setRating] = useState('');
+	const [autocomplete, setAutocomplete] = useState(null);
 	const { Provider } = AppContext;
 
 	useEffect(() => {
@@ -35,12 +36,24 @@ const App = () => {
 	}, []);
 
 	useEffect(() => {
-		setIsLoading(true);
-		getPlacesData(type, bounds?.sw, bounds?.ne).then((data) => {
-			setPlaces(data);
-			setIsLoading(false);
-		});
-	}, [coordinates, bounds, type]);
+		if (bounds) {
+			setIsLoading(true);
+			getPlacesData(type, bounds?.sw, bounds?.ne).then((data) => {
+				setPlaces(data?.filter((place) => place.name && place.num_reviews));
+				setIsLoading(false);
+			});
+		}
+	}, [bounds, type]);
+
+	const onLoad = (autoComplete) => {
+		setAutocomplete(autoComplete);
+	};
+
+	const onPlaceChanged = () => {
+		const lat = autocomplete.getPlace().geometry.location.lat();
+		const lng = autocomplete.getPlace().geometry.location.lng();
+		setCoordinates({ lat, lng });
+	};
 
 	const filteredPlaces = places?.filter((place) => place?.rating > rating);
 
@@ -60,6 +73,10 @@ const App = () => {
 				setType,
 				rating,
 				setRating,
+				autocomplete,
+				setAutocomplete,
+				onLoad,
+				onPlaceChanged,
 			}}
 		>
 			<CssBaseline>
